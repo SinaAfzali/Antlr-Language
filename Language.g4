@@ -1,11 +1,13 @@
 grammar Language;
 
-start: imports;
+start: imports* commands;
 // imports library
-imports: (('use' SPACE ArgumentName ('::' ArgumentName)? (SPACE 'as' SPACE ArgumentName)? NEWLINE) | ('extern' SPACE 'crate' SPACE ArgumentName) NEWLINE)* commands;
+imports: (('use' SPACE ArgumentName ('::' ArgumentName)? (SPACE 'as' SPACE ArgumentName)? NEWLINE) | ('extern' SPACE 'crate' SPACE ArgumentName) NEWLINE);
 // commands contains a body of codes
 commands: definitions | calls | instructions;
 // part of commands
+definitions:  var_definition | arr_definition | class_definition | func_definition;
+calls: 
 
 
 fragment CapitalLetter: [A-Z];
