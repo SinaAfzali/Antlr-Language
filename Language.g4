@@ -7,7 +7,10 @@ imports: (('use' SPACE ArgumentName ('::' ArgumentName)? (SPACE 'as' SPACE Argum
 commands: definitions | calls | instructions;
 // part of commands
 definitions:  var_definition | arr_definition | class_definition | func_definition;
-calls: 
+calls: func_call;
+instructions: if_statement | matchCase_instruction | while_loop | for_loop | readFile | writeFile;
+
+// part of definitions
 
 
 fragment CapitalLetter: [A-Z];
