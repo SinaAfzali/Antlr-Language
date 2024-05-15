@@ -1,0 +1,6 @@
+if sina==50:
+        sina=:58
+elif ali==60:
+        ali=:84
+else:
+        reza=:544

@@ -4,11 +4,12 @@ start: (imports NEWLINE+)* (commands NEWLINE+)*;
 // imports library
 imports: ('use' (ArgumentName | ClassName) ('::' (ArgumentName | ClassName))? ('as'  (ArgumentName | ClassName))? ) | ('extern'  'crate'  (ArgumentName | ClassName));
 // commands contains a body of codes
-commands: definitions | calls;
+commands: definitions | calls | instructions;
 // part of commands
 definitions:  var_definition | arr_definition | class_definition | func_definition;
 calls: func_call;
 // instructions: if_statement | matchCase_instruction | while_loop | for_loop | readFile | writeFile;
+instructions: if_statement | matchCase_instruction;
 
 // part of definitions
 var_definition: (('var'  (ArgumentName | ClassName) ( TYPE)? (EQUAL (STRING | Numbers))? ) | 
@@ -22,10 +23,10 @@ arr_definition: ( ('var' (ArgumentName | ClassName) EQUAL '[' (Numbers | '...') 
 
 class_definition: 'class' ClassName ('extends' ClassName)? ':' NEWLINE TABE ('public' | 'private')
 ClassName '(' (TYPE (ArgumentName | ClassName))* ')' ':'  (NEWLINE TABE 'this.' (ArgumentName | ClassName) EQUAL (ArgumentName | ClassName))*
-NEWLINE* (TABE (var_definition | arr_definition | func_definition | calls ))*;
+(NEWLINE* (TABE (var_definition | arr_definition | func_definition | calls )))*;
 
 func_definition: ('public' | 'private') 'static'? ('void' | TYPE) (ArgumentName | ClassName) '(' (TYPE (ArgumentName | ClassName))* ')' ':'
-(NEWLINE TABE? (var_definition | arr_definition | func_call))+;
+(NEWLINE TABE (var_definition | arr_definition | func_call))+;
 
 
 // part of calls 
@@ -34,7 +35,16 @@ func_call: ((ClassName Dot (ArgumentName | ClassName) '(' ((ArgumentName | Class
 
 
 // part of instructions
-// if_statement: 
+if_statement: 'if' (PHRASE|STRING|('=')+ |ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls))+ NEWLINE+ 
+('elif' (PHRASE|STRING|('=')+ |ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls))+)* NEWLINE+
+('else' ':' (NEWLINE TABE (arr_definition | var_definition | calls))+)?; 
+
+
+matchCase_instruction: 'match' (ArgumentName | ClassName) ':' 
+(NEWLINE TABE 'case' (Numbers|STRING) ':' (NEWLINE TABE ('return'|PHRASE|STRING|ArgumentName|ClassName)+)+ 'break'?)+
+(NEWLINE TABE 'default' ':' (NEWLINE TABE ('return'|PHRASE|STRING|ArgumentName|ClassName)+)+ 'break'?)?;
+
+
 
 
 fragment CapitalLetter: [A-Z];
@@ -63,6 +73,8 @@ ClassName: CapitalLetter WORD+;
 
 ArgumentName: (CapitalLetter | SmallLetter) WORD+;
 
-STRING: '"' (WORD | '!' | '#' | '&' | '|' | '*' | '-' | '+' | '[' | ']' | '{' | '}')+ '"';
+STRING: '"' WORD+ '"';
+
+PHRASE: (WORD | '!' | '<' | '>'| '(' | ')' | '&' | '|' | '%' | '*' | '/'|'+'|'-')+;
 
 WHITE_SPACE: (' '|'\r') -> skip;
