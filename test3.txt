@@ -1,6 +1,14 @@
-if sina==50:
-        sina=:58
-elif ali==60:
-        ali=:84
-else:
-        reza=:544
+class Sina extends Ali:
+	public Sina(int speed):
+	this.speed = speed
+
+	for sina in range(6):
+	if sina == ali:
+	ali=:565
+
+
+public void Ali():
+	mohi=:"koskesh"
+
+file = open("sina.txt","r")
+file.close()
