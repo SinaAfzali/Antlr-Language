@@ -12,44 +12,44 @@ instructions: if_statement | matchCase_instruction | while_loop | for_loop | rea
 
 
 // part of definitions
-var_definition: (('var'  (ArgumentName | ClassName) ( TYPE)? (EQUAL (STRING | Numbers| ClassName| ArgumentName| func_call))? ) | 
-('var'  (ArgumentName | ClassName) (COMMA (ArgumentName | ClassName))* TYPE? EQUAL (STRING | Numbers| ClassName| ArgumentName| func_call) (COMMA (STRING | Numbers| ClassName| ArgumentName| func_call))*) | 
-((ArgumentName | ClassName) (COMMA (ArgumentName | ClassName))* EQUAL ':' (STRING | Numbers| ClassName| ArgumentName| func_call) (COMMA (STRING | Numbers| ClassName| ArgumentName| func_call))*) | 
+var_definition: (('var'  (ArgumentName | ClassName) ( TYPE)? (EQUAL (STRING | Numbers| ClassName| ArgumentName| func_call| operator))? ) | 
+('var'  ((ArgumentName | ClassName)COMMA?)* TYPE? EQUAL ((STRING | Numbers| ClassName| ArgumentName| func_call| operator) COMMA?)*) | 
+(((ArgumentName | ClassName)COMMA?)* EQUAL ':' ((STRING | Numbers| ClassName| ArgumentName| func_call)COMMA?)* ) | 
 ('var' '(' (ArgumentName | ClassName)  TYPE (EQUAL (STRING | Numbers| ClassName| ArgumentName| func_call))? (NEWLINE (ArgumentName | ClassName)  TYPE (EQUAL (STRING | Numbers| ClassName| ArgumentName| func_call))?)* ')' ) );
 
 
 arr_definition: ( ('var' (ArgumentName | ClassName) EQUAL '[' (Numbers | '...') ']' TYPE '{' (STRING | Numbers) (COMMA (STRING | Numbers))* '}') |
 ((ArgumentName | ClassName) EQUAL ':' '[' (Numbers | '...') ']' TYPE '{' (STRING | Numbers) (COMMA (STRING | Numbers))* '}') );
 
-class_definition: 'class' ClassName ('extends' ClassName)? ':' NEWLINE TABE ('public' | 'private')
-ClassName '(' (TYPE (ArgumentName | ClassName))* ')' ':'  (NEWLINE TABE 'this.' (ArgumentName | ClassName) EQUAL (ArgumentName | ClassName))*
+class_definition: 'class' ClassName ('extends' ClassName)? ':' NEWLINE+ TABE ('public' | 'private')
+ClassName '(' (TYPE (ArgumentName | ClassName) COMMA?)* ')' ':'  (NEWLINE TABE 'this.' (ArgumentName | ClassName) EQUAL (ArgumentName | ClassName))*
 (NEWLINE* (TABE (var_definition | arr_definition | func_definition | calls | instructions| operator)))*;
 
-func_definition: ('public' | 'private') 'static'? ('void' | TYPE) (ArgumentName | ClassName) '(' (TYPE (ArgumentName | ClassName))? (COMMA TYPE (ArgumentName | ClassName))* ')' ':'
+func_definition: ('public' | 'private') 'static'? ('void' | TYPE) (ArgumentName | ClassName) '(' (TYPE (ArgumentName | ClassName) COMMA?)* ')' ':'
 (NEWLINE TABE (var_definition | arr_definition | func_call| instructions| operator| returnFunc))+;
 
 
 // part of calls 
-func_call: ((ClassName Dot (ArgumentName | ClassName) '(' ((ArgumentName | ClassName| operator| Numbers| STRING) (COMMA (ArgumentName | ClassName| operator| Numbers| STRING))*)? ')') | 
+func_call: ((ClassName Dot (ArgumentName | ClassName) '(' ((ArgumentName | ClassName| Numbers| STRING) COMMA?)* ')') | 
 ((ArgumentName | ClassName) '(' ((ArgumentName | ClassName| operator| Numbers| STRING) (COMMA (ArgumentName | ClassName| operator| Numbers| STRING))*)? ')'));
 
 
 // part of instructions
 if_statement: 'if' (operator|STRING|ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+ NEWLINE* TABE?
-('elif' (operator|STRING|ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+) NEWLINE* TABE?
+('elif' (operator|STRING|ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+)* NEWLINE* TABE?
 ('else' ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+)?; 
 
 
 matchCase_instruction: 'match' (ArgumentName | ClassName) ':' 
-(NEWLINE TABE 'case' (Numbers|STRING) ':' (NEWLINE TABE ('return'|operator|STRING|ArgumentName|ClassName| returnFunc)+)+ 'break'?)+
-(NEWLINE TABE 'default' ':' (NEWLINE TABE ('return'|operator|STRING|ArgumentName|ClassName)| returnFunc+)+ 'break'?)?;
+(NEWLINE TABE 'case' (Numbers|STRING) ':' (NEWLINE TABE ('return'|operator|STRING|ArgumentName|ClassName| returnFunc)+)+ (NEWLINE TABE)? 'break'?)+
+(NEWLINE TABE 'default' ':' (NEWLINE TABE ('return'|operator|STRING|ArgumentName|ClassName)| returnFunc+)* (NEWLINE TABE)? 'break'?)?;
 
-while_loop: 'while' (operator|STRING|('=')+ |ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+ ;
+while_loop: 'while' (operator|STRING|('=')+ |ArgumentName|ClassName|Numbers)+ ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+ NEWLINE*;
 
 for_loop:('for' (ArgumentName | ClassName| STRING) 'in' (ArgumentName|ClassName| STRING) ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+ ) |
 ('for' (ArgumentName|ClassName) 'in' 'range' '(' (ArgumentName|ClassName|Numbers) ')' ':' (NEWLINE TABE (arr_definition | var_definition | calls | instructions| operator| returnFunc))+ );
 
-readFile: (ArgumentName|ClassName) EQUAL 'open' '(' '"' (WORD+ | ArgumentName | ClassName) Dot 'txt' '"' COMMA ('"r"' | '"w"' ) ')';
+readFile: (ArgumentName|ClassName) EQUAL 'open' '(' FileName COMMA ('"r"' | '"w"' ) ')';
 
 writeFile: (ArgumentName|ClassName) Dot 'write' '(' STRING ')';
 
@@ -88,14 +88,16 @@ ClassName: CapitalLetter WORD+;
 
 ArgumentName: (CapitalLetter | SmallLetter) WORD+;
 
-STRING: '"' WORD+ '"';
+FileName: '"' (WORD+ | ArgumentName | ClassName) Dot 'txt' '"';
+
+STRING: '"' (WORD | '@' | Dot| COMMA| ' '| '!')+ '"';
 
 
 
 operator: operator ('//=' | '+=' | '=') b | b;
 b: b ('&&' | '||') c | '!'b | c;
 c: c ('>=' | '<=' | '<' | '>') d | d;
-d: d ('==' | '===' | '!=') e | e;
+d: d ('==' | '===' | '!=') e | '<' e '>' | e;
 e: e ('&' | '|') f | f;
 f: f ('<<' | '>>') g | g;
 g: g ('+' | '-') h | h;
