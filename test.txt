@@ -61,6 +61,10 @@ public int choiser(int number):
 	break
 	return -1
 
+## hi i'm a comment
+i test multi line comment
+ ##
+
 public void readfile():
 	file = open("file.txt", "r")
 	file.close()
