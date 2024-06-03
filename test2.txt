@@ -1,0 +1,81 @@
+use Random as rand
+extern crate numpy
+
+class Calculatetor:
+
+	public Calculator(int start):
+	this.start = start
+
+
+	public static void add(int number1 , int number2):
+	number3 = number1 + number2
+	return number3
+
+
+	public static int Pow(int number):
+	var number2 int = number
+	number3 =: number
+	return number2 * number3
+
+
+	public static int sum(int aray):
+	var sum int = 0
+	for it in array:
+	sum += it
+	return sum
+
+private int returnArray():
+	var array = [5] int {1,2,3,4,5}
+	return array
+
+public int sumArray():
+	var array int = returnArray()
+	var sum int = Calculatetor.sum(array)
+
+public int max(int number1, int number2):
+	if number1 > number2:
+	return number1
+	else:
+	return number2
+
+public int fact(int number):
+	var(sumfact int = 1)
+	while number > 0:
+	sumfact = sumfact * number
+	number--
+
+	return sumfact
+
+public int choiser(int number):
+	match number:
+	case 0:
+	return 10 - number
+	break
+	case 1:
+	return 20 + number
+	break
+	case 2:
+	return 2 * number
+	break
+	default:
+	break
+	return -1
+
+## hi i'm a comment
+i test multi line comment
+ ##
+
+public void readfile():
+	file = open("file.txt", "r")
+	file.close()
+
+public void writefile():
+	file = open("file.txt", "w")
+	file.write("Hello World!")
+	file.close()
+
+public int testOperations():
+	var number1 int = 10 - 20 * (70 / 80 + 20 ** 30) + 10 ** 50
+	var number2 int = 100 && 200
+	number1 /= number2
+	return number1

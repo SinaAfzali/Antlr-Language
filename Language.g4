@@ -1,6 +1,6 @@
 grammar Language;
 
-start: (imports NEWLINE+)* (commands NEWLINE+)*;
+start: (NEWLINE* imports NEWLINE+)* (NEWLINE* commands NEWLINE+)*;
 // imports library
 imports: ('use' (ArgumentName | ClassName) ('::' (ArgumentName | ClassName))? ('as'  (ArgumentName | ClassName))? ) | ('extern'  'crate'  (ArgumentName | ClassName));
 // commands contains a body of codes
@@ -61,7 +61,7 @@ returnFunc: ('return' (STRING| Numbers | ClassName| ArgumentName| operator));
 
 
 
-
+fragment Comment_Simbol: '#';
 fragment CapitalLetter: [A-Z];
 fragment SmallLetter: [a-z];
 fragment Number: [0-9];
@@ -94,6 +94,10 @@ STRING: '"' (WORD | '@' | Dot| COMMA| ' '| '!')+ '"';
 
 
 
+Comment: (Comment_Simbol Comment_Simbol  .*?  Comment_Simbol Comment_Simbol) -> skip;
+
+
+
 operator: operator ('//=' | '+=' | '=') b | b;
 b: b ('&&' | '||') c | '!'b | c;
 c: c ('>=' | '<=' | '<' | '>') d | d;
@@ -107,6 +111,8 @@ j: ('-' | '+') j | k;
 k: k '**' l | l;
 l: '(' operator ')' | m;
 m: ArgumentName | ClassName | Numbers| STRING; 
+
+
 
 
 WHITE_SPACE: (' '|'\r') -> skip;
