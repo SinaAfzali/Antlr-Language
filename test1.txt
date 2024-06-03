@@ -1,8 +1,0 @@
-class Sina extends Ali:
-	public Sina(int speed):
-	this.speed = speed
-
-	public static void Sina():
-	hello=:"hello"
-public void Ali():
-	mohi=:"koskesh"
